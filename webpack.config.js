@@ -5,7 +5,8 @@ module.exports = {
   context: __dirname,
 
   entry: {
-    overlay: [/*'webpack/hot/dev-server', 'babel-polyfill',*/ './app/src/overlay.js']
+    overlay: [/*'webpack/hot/dev-server', 'babel-polyfill',*/ './app/src/overlay.js'],
+    modal: [/*'webpack/hot/dev-server', 'babel-polyfill',*/ './app/src/modal.js']
   },
 
   output: {

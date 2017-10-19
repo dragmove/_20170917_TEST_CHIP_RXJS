@@ -2,20 +2,10 @@ var webpack = require('webpack'),
   path = require('path');
 
 module.exports = {
-  devServer: {
-    contentBase: './app',
-    noInfo: true, //  --no-info option
-    // host: '',
-    port: 9001,
-    hot: true,
-    inline: true
-  },
-
   context: __dirname,
 
   entry: {
-    main: [/*'webpack/hot/dev-server',*/ 'babel-polyfill', './app/src/main.js'],
-    imageLoader: [/*'webpack/hot/dev-server',*/ 'babel-polyfill', './app/src/imageLoader.js']
+    overlay: [/*'webpack/hot/dev-server', 'babel-polyfill',*/ './app/src/overlay.js']
   },
 
   output: {
@@ -28,7 +18,14 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader'
+        loader: 'babel-loader',
+        options: {
+          presets: [
+            ["env", {
+              "modules": false
+            }]
+          ]
+        }
       }
     ]
 
@@ -45,16 +42,31 @@ module.exports = {
 
   plugins: [
     new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        drop_console: false,
-        warnings: false
+      sourceMap: true,
+      mangle: false,
+      output: {
+        beautify: true,
+        comments: true
       },
-      sourceMap: true
+      compress: {
+        unused: true,
+        drop_console: false,
+        warnings: true
+      }
     }),
 
     new webpack.BannerPlugin({
       banner: '',
       raw: true
     })
-  ]
+  ],
+
+  devServer: {
+    contentBase: './app',
+    noInfo: true, //  --no-info option
+    // host: '',
+    port: 9001,
+    hot: true,
+    inline: true
+  }
 };

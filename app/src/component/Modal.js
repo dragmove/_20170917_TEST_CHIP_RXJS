@@ -55,11 +55,13 @@
  console.log('modal.getNode() :', modal.getNode());
  */
 
+import Rx from 'rxjs/Rx';
+
 class Modal {
   constructor(options) {
     const _ = this;
 
-    _.option = {
+    _.option = $.extend({
       wrapClass: 'modal-wrap',
       contents: '',
       appendTo: $('body'),
@@ -68,8 +70,7 @@ class Modal {
       isCloseByEscKey: true,
       showCallback: null,
       hideCallback: null
-    };
-    $.extend(_.option, options);
+    }, options);
 
     _.wrap = null;
     _.contents = null;
@@ -78,11 +79,20 @@ class Modal {
 
     _.isShow = false;
 
+    // TODO: to RX
+    /*
     _.proxy = {
       closeBtnEventHandler: null,
       wrapEventHandler: null,
       escKeyEventHandler: null
     };
+    */
+
+    // stream
+    _.clickCloseBtn$ = null;
+
+    // subcriber
+    _.clickCloseBtnSubscribe = null;
   }
 
   /*
@@ -101,16 +111,22 @@ class Modal {
 
     _.closeBtn = $(_.option.closeBtnSelector, _.wrap);
 
+    /*
     _.proxy = {
       closeBtnEventHandler: $.proxy(_.closeBtnEventHandler, _),
       wrapEventHandler: $.proxy(_.wrapEventHandler, _),
       escKeyEventHandler: $.proxy(_.escKeyEventHandler, _)
     };
+    */
+
+    _.clickCloseBtn$ = Rx.Observable.fromEvent(_.closeBtn, 'click');
 
     if (_.closeBtn.length) _.setCloseBtnEventHandler(true);
 
+    /*
     if (_.option.isCloseByClickOutside) _.setWrapEventHandler(true);
     if (_.option.isCloseByEscKey) _.setEscKeyEventHandler(true);
+    */
 
     return _;
   }
@@ -118,17 +134,29 @@ class Modal {
   setCloseBtnEventHandler(flag) {
     const _ = this;
 
-    if (!_.closeBtn) return;
+    if(_.clickCloseBtnSubscribe) {
+      _.clickCloseBtnSubscribe.unsubscribe();
+      _.clickCloseBtnSubscribe = null;
+    }
 
-    if (flag) {
-      _.closeBtn.on('click.ui.modal', _.proxy.closeBtnEventHandler);
-    } else {
-      _.closeBtn.off('click.ui.modal', _.proxy.closeBtnEventHandler);
+    if (flag === true) {
+      _.clickCloseBtnSubscribe = _.clickCloseBtn$
+        .do(evt => console.log(evt))
+
+        .map(val => {
+          console.log('val :', val);
+          return val;
+        })
+
+        .subscribe(evt => {
+
+        });
     }
 
     return _;
   }
 
+  /*
   setWrapEventHandler(flag) {
     const _ = this;
 
@@ -154,6 +182,7 @@ class Modal {
 
     return _;
   }
+  */
 
   closeBtnEventHandler(evt) {
     evt.preventDefault();
@@ -228,9 +257,11 @@ class Modal {
   destroy(obj) {
     const _ = this;
 
+    /*
     _.setCloseBtnEventHandler(false);
     _.setWrapEventHandler(false);
     _.setEscKeyEventHandler(false)
+    */
 
     _.wrap = null;
     _.parentNode = null;

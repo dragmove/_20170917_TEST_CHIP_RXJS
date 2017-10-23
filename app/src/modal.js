@@ -37,5 +37,7 @@ import Modal from './component/Modal';
 
     // destroy
     // modal.destroy();
+
+    window.modal = modal;
   }
 }(jQuery));

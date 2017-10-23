@@ -54,6 +54,7 @@ class Overlay {
     _.parentNode = _.option.appendTo;
 
     _.clickOverlay$ = null;
+    _.subscribe = null;
   }
 
   init() {
